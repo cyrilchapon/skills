@@ -14,10 +14,10 @@ skills/plugins will be added over time.
 
 | Skill | Produces | Triggers on |
 |---|---|---|
-| [`draft-screen`](skills/draft-screen) | The full package below, for one or more screens | "draft/design/spec out a screen", requests for a screen end-to-end rather than one artifact of it |
-| [`draft-screen-markdown`](skills/draft-screen-markdown) | A structured `.md` doc (purpose, entities, states, actions, relations, open questions) | "document/spec out this screen", "write up what we designed" |
-| [`draft-screen-excalidraw`](skills/draft-screen-excalidraw) | One or more `.excalidraw` wireframes, contextualized with realistic content | "mock up/wireframe/prototype/sketch this screen" |
-| [`render-excalidraw`](skills/render-excalidraw) | Standalone `.svg` renders of `.excalidraw` files | Any time an `.excalidraw` file needs to be viewed, shared, or embedded |
+| [`draft-screen`](plugins/screen-drafting/skills/draft-screen) | The full package below, for one or more screens | "draft/design/spec out a screen", requests for a screen end-to-end rather than one artifact of it |
+| [`draft-screen-markdown`](plugins/screen-drafting/skills/draft-screen-markdown) | A structured `.md` doc (purpose, entities, states, actions, relations, open questions) | "document/spec out this screen", "write up what we designed" |
+| [`draft-screen-excalidraw`](plugins/screen-drafting/skills/draft-screen-excalidraw) | One or more `.excalidraw` wireframes, contextualized with realistic content | "mock up/wireframe/prototype/sketch this screen" |
+| [`render-excalidraw`](plugins/screen-drafting/skills/render-excalidraw) | Standalone `.svg` renders of `.excalidraw` files | Any time an `.excalidraw` file needs to be viewed, shared, or embedded |
 
 ### How they relate
 
@@ -55,7 +55,7 @@ app.
 
 | Skill | Produces | Triggers on |
 |---|---|---|
-| [`data-model-diagram`](skills/data-model-diagram) | A Mermaid `erDiagram` (rendered inline, or exported as `.mmd`/`.md`) built up conversationally, in simplified or detailed form | "design/model the data model", "ER diagram", "entity-relationship diagram", "schema diagram", requests to add to or evolve a data model already under discussion |
+| [`data-model-diagram`](plugins/data-model-diagram/skills/data-model-diagram) | A Mermaid `erDiagram` (rendered inline, or exported as `.mmd`/`.md`) built up conversationally, in simplified or detailed form | "design/model the data model", "ER diagram", "entity-relationship diagram", "schema diagram", requests to add to or evolve a data model already under discussion |
 
 Independent of the screen-drafting skills — no cross-references either way.
 Works iteratively: proposes entities/relationships in prose for confirmation
@@ -65,26 +65,48 @@ See its `SKILL.md` for the modeling conventions it surfaces (pivot entities,
 catalog-vs-enum, derived vs. stored fields, etc.) and
 `references/worked-example.md` for a full walkthrough on a sample domain.
 
-## Repo structure: one flat `skills/`, multiple plugins
+## Repo structure: one subdirectory per plugin
 
-All skills live directly under the top-level `skills/` directory, regardless
-of which plugin they belong to — there's no per-plugin subfolder. This is
-deliberate: a flat `skills/<name>/SKILL.md` layout is the convention several
-tools beyond Claude Code rely on for discovery (skills.sh's default scan,
-Codex CLI, Gemini CLI, Copilot CLI), so keeping it flat means this repo stays
-usable outside the Claude plugin ecosystem too, not just inside it.
+Each plugin lives in its own directory under `plugins/`, with its own
+`.claude-plugin/plugin.json` and its own `skills/`:
 
-Plugin boundaries are expressed purely in `.claude-plugin/marketplace.json`:
-each plugin entry sets `"source": "./"` (the shared repo root) and lists the
-specific skill directories that belong to it via `"skills": [...]`. Because
-several plugins can share one `source`, none of them can rely on a top-level
-`.claude-plugin/plugin.json` for identity — that's why each entry sets
-`"strict": false` and carries its own metadata (`version`, `author`,
-`license`, `keywords`...) directly in the marketplace entry instead.
+```
+plugins/
+├── screen-drafting/
+│   ├── .claude-plugin/plugin.json
+│   └── skills/draft-screen/, draft-screen-markdown/, draft-screen-excalidraw/, render-excalidraw/
+└── data-model-diagram/
+    ├── .claude-plugin/plugin.json
+    └── skills/data-model-diagram/
+```
 
-Adding a future, unrelated skill group means adding its skill directories
-under `skills/` and a new entry to the `plugins` array listing them — no
-restructuring of existing plugins required.
+The root `.claude-plugin/marketplace.json` just lists each plugin with a
+`source` pointing at its own directory — no two plugins share a `source`.
+
+This wasn't the first layout tried. An earlier version kept a single flat
+`skills/` directory at the repo root shared by every plugin, with each
+marketplace entry declaring its own subset via a `skills: [...]` field
+(`source: "./"`, `strict: false`) — the schema explicitly supports this, and
+it has the advantage of staying compatible with tools that expect a plain
+`skills/<name>/SKILL.md` convention beyond Claude Code (skills.sh's default
+scan, Codex CLI, Gemini CLI, Copilot CLI). In practice, though, claude.ai's
+plugin sync didn't respect that per-entry scoping — every plugin installed
+from it showed *all* skills from the shared folder, not just its own. The
+per-plugin-directory layout here doesn't depend on that scoping being
+correctly honored: a plugin's boundary is which directory `source` points
+to, which every surface has to get right for plugins to work at all.
+
+The trade-off: skills.sh still resolves each skill correctly (it explicitly
+parses `.claude-plugin/marketplace.json`/`plugin.json` and follows a
+plugin's declared `source`, at any depth), but tools with no notion of a
+Claude plugin manifest — Codex CLI, Gemini CLI, Copilot CLI — won't find
+these skills via their own flat-`skills/`-at-root convention. That's an
+accepted cost for now, in exchange for `claude.ai` actually working
+correctly.
+
+Adding a future, unrelated skill group means adding a new `plugins/<name>/`
+directory with its own `plugin.json` and `skills/`, plus one new entry in
+`marketplace.json` — no changes to existing plugins required.
 
 ## Installing
 
