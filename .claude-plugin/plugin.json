@@ -1,0 +1,19 @@
+{
+  "name": "screen-drafting",
+  "version": "0.1.0",
+  "description": "Draft app/product screens end to end: a structured markdown spec, editable Excalidraw wireframes, and rendered SVG previews.",
+  "author": {
+    "name": "Cyril Chapon",
+    "email": "chpn.cyril@gmail.com"
+  },
+  "repository": "https://github.com/cyrilchapon/skills",
+  "license": "MIT",
+  "keywords": [
+    "screens",
+    "wireframe",
+    "excalidraw",
+    "design",
+    "product",
+    "documentation"
+  ]
+}

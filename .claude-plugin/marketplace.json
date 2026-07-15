@@ -1,0 +1,14 @@
+{
+  "name": "cyrilchapon-skills",
+  "owner": {
+    "name": "Cyril Chapon",
+    "email": "chpn.cyril@gmail.com"
+  },
+  "plugins": [
+    {
+      "name": "screen-drafting",
+      "source": "./",
+      "description": "Draft app/product screens end to end: a structured markdown spec, editable Excalidraw wireframes, and rendered SVG previews."
+    }
+  ]
+}
