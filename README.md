@@ -6,7 +6,9 @@ instead of living only inside claude.ai's skill editor.
 Skills are grouped into plugins when they form a coherent workflow. The
 first group, **screen-drafting**, bundles four skills for taking an app/
 product screen from a design discussion to a documented, wireframed,
-viewable deliverable. More skills/plugins will be added over time.
+viewable deliverable. **data-model-diagram** is a second, independent
+plugin for modeling entities/relationships as a Mermaid diagram. More
+skills/plugins will be added over time.
 
 ## Plugin: screen-drafting
 
@@ -49,6 +51,20 @@ whatever's realistic for the product being worked on. The goal is a skill
 set that works the same way on any project, not one tuned to a specific
 app.
 
+## Plugin: data-model-diagram
+
+| Skill | Produces | Triggers on |
+|---|---|---|
+| [`data-model-diagram`](skills/data-model-diagram) | A Mermaid `erDiagram` (rendered inline, or exported as `.mmd`/`.md`) built up conversationally, in simplified or detailed form | "design/model the data model", "ER diagram", "entity-relationship diagram", "schema diagram", requests to add to or evolve a data model already under discussion |
+
+Independent of the screen-drafting skills — no cross-references either way.
+Works iteratively: proposes entities/relationships in prose for confirmation
+before rendering, slices large domains into confirmed layers, and defaults
+to a simplified (attribute-free) diagram unless a detailed one is requested.
+See its `SKILL.md` for the modeling conventions it surfaces (pivot entities,
+catalog-vs-enum, derived vs. stored fields, etc.) and
+`references/worked-example.md` for a full walkthrough on a sample domain.
+
 ## Repo structure: one flat `skills/`, multiple plugins
 
 All skills live directly under the top-level `skills/` directory, regardless
@@ -77,6 +93,7 @@ restructuring of existing plugins required.
 ```
 /plugin marketplace add cyrilchapon/skills
 /plugin install screen-drafting
+/plugin install data-model-diagram
 ```
 
 ### claude.ai
