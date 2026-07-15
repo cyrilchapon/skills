@@ -1,5 +1,6 @@
 {
   "name": "cyrilchapon-skills",
+  "description": "Cyril Chapon's personal Claude plugins and skills.",
   "owner": {
     "name": "Cyril Chapon",
     "email": "chpn.cyril@gmail.com"
@@ -8,7 +9,29 @@
     {
       "name": "screen-drafting",
       "source": "./",
-      "description": "Draft app/product screens end to end: a structured markdown spec, editable Excalidraw wireframes, and rendered SVG previews."
+      "strict": false,
+      "description": "Draft app/product screens end to end: a structured markdown spec, editable Excalidraw wireframes, and rendered SVG previews.",
+      "version": "0.1.0",
+      "author": {
+        "name": "Cyril Chapon",
+        "email": "chpn.cyril@gmail.com"
+      },
+      "repository": "https://github.com/cyrilchapon/skills",
+      "license": "MIT",
+      "keywords": [
+        "screens",
+        "wireframe",
+        "excalidraw",
+        "design",
+        "product",
+        "documentation"
+      ],
+      "skills": [
+        "./skills/draft-screen",
+        "./skills/draft-screen-markdown",
+        "./skills/draft-screen-excalidraw",
+        "./skills/render-excalidraw"
+      ]
     }
   ]
 }

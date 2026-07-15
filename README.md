@@ -49,6 +49,27 @@ whatever's realistic for the product being worked on. The goal is a skill
 set that works the same way on any project, not one tuned to a specific
 app.
 
+## Repo structure: one flat `skills/`, multiple plugins
+
+All skills live directly under the top-level `skills/` directory, regardless
+of which plugin they belong to — there's no per-plugin subfolder. This is
+deliberate: a flat `skills/<name>/SKILL.md` layout is the convention several
+tools beyond Claude Code rely on for discovery (skills.sh's default scan,
+Codex CLI, Gemini CLI, Copilot CLI), so keeping it flat means this repo stays
+usable outside the Claude plugin ecosystem too, not just inside it.
+
+Plugin boundaries are expressed purely in `.claude-plugin/marketplace.json`:
+each plugin entry sets `"source": "./"` (the shared repo root) and lists the
+specific skill directories that belong to it via `"skills": [...]`. Because
+several plugins can share one `source`, none of them can rely on a top-level
+`.claude-plugin/plugin.json` for identity — that's why each entry sets
+`"strict": false` and carries its own metadata (`version`, `author`,
+`license`, `keywords`...) directly in the marketplace entry instead.
+
+Adding a future, unrelated skill group means adding its skill directories
+under `skills/` and a new entry to the `plugins` array listing them — no
+restructuring of existing plugins required.
+
 ## Installing
 
 ### Claude Code
